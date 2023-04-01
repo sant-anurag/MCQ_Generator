@@ -1,21 +1,49 @@
+# Importing tkinter module with alias name "tk"
 import tkinter as tk
+
+# Importing specific classes and functions from tkinter module
+
+from tkinter import (
+    Tk, Label, Entry, Button, Frame, Text, Scrollbar, Listbox,
+    Menu, PhotoImage, filedialog, messagebox, Canvas,constants
+)
+
 from tkinter import *
-import tkinter.messagebox
+# Importing specific class from tkinter.messagebox module
+from tkinter.messagebox import showinfo
+
+# Importing docx module to work with Word documents
 import docx
-import tkinter as tk
+
+# Importing ttk module from tkinter with alias name "ttk"
 from tkinter import ttk
+
+# Importing openpyxl module to work with Excel files
 import openpyxl
-from tkcalendar import DateEntry
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Alignment
+
+# Importing DateEntry class from tkcalendar module
+from tkcalendar import DateEntry
+
+# Importing random module for generating random values
 import random
+
+# Importing partial function from functools module
 from functools import partial
+
+# Importing shutil module for working with files and directories
 import shutil
+
+# Importing os module for interacting with the operating system
 import os
+
+# Importing pyautogui module for automating mouse and keyboard actions
 import pyautogui
-from PIL import ImageTk, Image
-import PIL.Image
+
+# Importing Image and ImageTk classes from PIL module
+from PIL import Image, ImageTk
 
 
 # defining fonts for usage in project
@@ -30,24 +58,43 @@ XXL_FONT = ('times new roman', 25, 'normal')
 XL_FONT = ('times new roman', 20, 'normal')
 L_FONT = ('times new roman', 15, 'normal')
 
-def reset_MCQCreatorWindow(assessmentName_text,total_questions_entry,low_complexity_entry,medium_complexity_entry,high_complexity_entry,duration_entry,totalMarks_entry):
-    assessmentName_text.delete(0, tk.END)
+# Function to reset the fields in the MCQ Creator window
+def reset_mcq_creator_window(assessment_name_entry, total_questions_entry, low_complexity_entry, medium_complexity_entry, high_complexity_entry, duration_entry, total_marks_entry):
+    assessment_name_entry.delete(0, tk.END)
     total_questions_entry.delete(0, tk.END)
     low_complexity_entry.delete(0, tk.END)
     medium_complexity_entry.delete(0, tk.END)
     high_complexity_entry.delete(0, tk.END)
     duration_entry.delete(0, tk.END)
-    totalMarks_entry.delete(0, tk.END)
-    assessmentName_text.insert(0, "")
+    total_marks_entry.delete(0, tk.END)
+    assessment_name_entry.insert(0, "")
     total_questions_entry.insert(0, "")
     low_complexity_entry.insert(0, "")
     medium_complexity_entry.insert(0, "")
     high_complexity_entry.insert(0, "")
     duration_entry.insert(0, "")
-    totalMarks_entry.insert(0, "")
+    total_marks_entry.insert(0, "")
 
 def close_app():
     root.destroy()
+
+# function to check if input string is a valid numeric value
+def is_valid_numeric_input(input_str):
+    try:
+        float(input_str)
+        return True
+    except ValueError:
+        return False
+
+# validation function for numeric input in Entry widgets
+def validate_numeric_input(input_str):
+    # check if input string is a valid numeric value or empty string
+    if is_valid_numeric_input(input_str) or input_str == "":
+        return True
+    else:
+        # display error message if input string is not a valid numeric value
+        tk.messagebox.showerror("Invalid Entry", "Please enter a numeric value.")
+        return False
 
 def write_to_word_file(total_question_count, low_complexity_percentage, medium_complexity_percentage,
                        high_complexity_percentage):
@@ -140,16 +187,25 @@ def write_to_word_file(total_question_count, low_complexity_percentage, medium_c
     shutil.copy('MCQ.docx', dest_path)
 
 def generate_check(total_questions_entry,low_complexity_entry,medium_complexity_entry,high_complexity_entry):
+    # get the values entered in low, medium, and high complexity entries
     low = float(low_complexity_entry.get())
     medium = float(medium_complexity_entry.get())
     high = float(high_complexity_entry.get())
+    
+    # calculate the total percentage
     total = low + medium + high
+
+    # check if the total percentage is equal to 100
     if total == 100:
-        write_to_word_file(total_questions_entry, low, medium,
-                           high)
+        # if yes, call the write_to_word_file function with arguments
+        write_to_word_file(total_questions_entry, low, medium, high)
+        # show success message
         tk.messagebox.showinfo("Success", "MCQ is ready")
     else:
-        tk.messagebox.showerror("Error", "The sum of the low, medium, and high complexity percentages is not equal to 100.")
+        # if no, show error message
+        tk.messagebox.showerror("Error",
+                                "The sum of the low, medium, and high complexity percentages is not equal to 100.")
+
 def donothing(event=None):
     print("Button is disabled")
     pass
@@ -222,12 +278,31 @@ def create_MCQWindow(master):
     assessmentName_text = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow')
     cal = DateEntry(dataEntryFrame, width=28, font=NORM_FONT, date_pattern='dd/MM/yyyy', bg='light yellow',
                     anchor=W, justify=LEFT)
+
+    # create Entry widget for total questions
     totQuest_text = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow')
+    # configure validation for numeric input
+    totQuest_text.config(validate="key", validatecommand=(totQuest_text.register(validate_numeric_input), "%P"))
+
+    # create Entry widget for low percentage
     lowPerc_text = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow')
+    lowPerc_text.config(validate="key", validatecommand=(lowPerc_text.register(validate_numeric_input), "%P"))
+
+    # create Entry widget for medium percentage
     mediumPerc_text = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow')
+    mediumPerc_text.config(validate="key", validatecommand=(mediumPerc_text.register(validate_numeric_input), "%P"))
+
+    # create Entry widget for high percentage
     highPerc_text = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow')
+    highPerc_text.config(validate="key", validatecommand=(highPerc_text.register(validate_numeric_input), "%P"))
+
+    # create Entry widget for total marks
     totMarks_text = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow')
+    totMarks_text.config(validate="key", validatecommand=(totMarks_text.register(validate_numeric_input), "%P"))
+
+    # create Entry widget for duration
     duration_text = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow')
+    duration_text.config(validate="key", validatecommand=(duration_text.register(validate_numeric_input), "%P"))
 
     assessmentName_text.grid(row=0, column=1, pady=5)
     cal.grid(row=1, column=1, pady=5)
@@ -250,7 +325,7 @@ def create_MCQWindow(master):
                              font=NORM_FONT, width=8, bg='light cyan', underline=0, state=NORMAL)
     generate_deposit.grid(row=0, column=0)
 
-    clear_result = partial(reset_MCQCreatorWindow,assessmentName_text,totQuest_text,lowPerc_text, mediumPerc_text,highPerc_text,duration_text,totMarks_text)
+    clear_result = partial(reset_mcq_creator_window,assessmentName_text,totQuest_text,lowPerc_text, mediumPerc_text,highPerc_text,duration_text,totMarks_text)
     reset_button = Button(buttonFrame, text="Reset", fg="Black", command=clear_result,
                    font=NORM_FONT, width=8, bg='light cyan', underline=0)
     reset_button.grid(row=0, column=1)
@@ -273,22 +348,28 @@ def create_MCQWindow(master):
     create_MCQWindow.grab_set()
     #mainloop()
     
+
+# define a function to create a new window to insert questions
 def insert_questions(master):
+    # create a new window
     insertQ_window = Toplevel(master)
 
+    # set the window title and size, and background color
     headingForm = "Add Assessment Questions"
     insertQ_window.title("Question Bank Creation ")
-
     insertQ_window.geometry('760x615+700+250')
     insertQ_window.configure(background='wheat')
     insertQ_window.resizable(width=True, height=True)
 
-    heading = Label(insertQ_window, text=headingForm, font=('ariel narrow', 15, 'bold'),
-                    bg='wheat')
+    # create a heading label and place it in the window
+    heading = Label(insertQ_window, text=headingForm, font=('ariel narrow', 15, 'bold'), bg='wheat')
     heading.grid(row=0, column=0, columnspan=3)
+
+    # create two frames to place the UI elements in
     right_frame = Frame(insertQ_window, width=600, bd=6, relief='ridge', bg='light yellow')
     left_frame = Frame(insertQ_window, width=600, bd=6, relief='ridge', bg='light yellow')
 
+    # create a label and text box to enter the question in the right frame, and place them in the frame
     question_label =  Label(right_frame, text="Question Description :", width=20, anchor=W, justify=LEFT,
                           font=NORM_FONT,
                           bg='light yellow')
@@ -296,17 +377,19 @@ def insert_questions(master):
     question_entry = tk.Text(right_frame, height=15, width=80, font=NORM_FONT)
     question_entry.grid(row=1, column=0, padx=10, pady=10, sticky="W")
 
+    # place the two frames in the window
     right_frame.grid(row=1, column=1, padx=2, pady=5, sticky=W)
     left_frame.grid(row=2, column=1, padx=2, pady=5, sticky=W)
 
+    # create a frame to display a message, and place it in the window
     infoFrame = Frame(insertQ_window, width=200, height=100, bd=8, relief='ridge', bg='light yellow')
     infoFrame.grid(row=4, column=0, padx=90, pady=5, columnspan=4, sticky=W)
 
     # ---------------------------------Preparing display Area - start ---------------------------------
 
+    # create a drop down box to select the complexity level, and place it in the left frame
     itemnametext = StringVar(left_frame)
-    itemnamelabel = Label(left_frame, text="Complexity", width=12, anchor=W, justify=LEFT,
-                          font=NORM_FONT,
+    itemnamelabel = Label(left_frame, text="Complexity", width=12, anchor=W, justify=LEFT, font=NORM_FONT,
                           bg='light yellow')
     itemnamelabel.grid(row=0, column=1, padx=10, pady=5)
 
@@ -315,7 +398,7 @@ def insert_questions(master):
     complexity_dropdown.current(0)
     complexity_dropdown.grid(row=0, column=2, pady=5)
 
-    # Display item Id - Row 4
+    # create a text box to enter the subject of the question, and place it in the left frame
     descriptiontext = StringVar(left_frame)
     descriptionlabel = Label(left_frame, text="Subject", width=12, anchor=W, justify=LEFT,
                              font=NORM_FONT,
@@ -357,8 +440,6 @@ def insert_questions(master):
                       font=NORM_FONT,
                       bg='light yellow')
 
-
-
     infoLabel.grid(row=1, column=0, padx=10, pady=5)
 
     # ---------------------------------Button Frame Start----------------------------------------
@@ -396,57 +477,67 @@ def insert_questions(master):
     insertQ_window.grab_set()
     #mainloop()
 
+# define a function to design the main screen of the application
 def designMainScreen(master):
+    # create a label for the title of the application
     labelFrame = Label(master, text="Assessment Creator", justify=CENTER,
                        font=XXL_FONT,
                        fg='black')
-    # labelFrame.place(x=200, y=10)
+    # create a button to add questions and assign a command to it
     result_btnAddQuestion = partial(insert_questions,master)
     btn_addQues = Button(master, text="Add Question", fg="Black", command=result_btnAddQuestion,
                            font=XL_FONT, width=20, state=NORMAL, bg='RosyBrown1')
-    # labelFrame.place(x=200, y=10)
+    # create a button to create a paper and assign a command to it
     result_createPaper = partial(create_MCQWindow,master)
     btn_createPaper = Button(master, text="Create Paper", fg="Black", command=result_createPaper,
                          font=XL_FONT, width=20, state=NORMAL, bg='RosyBrown1')
-
+    # create a button for user control
     btn_usrCtrl = Button(master, text="User Control", fg="Black", command=None,
                              font=XL_FONT, width=20, state=NORMAL, bg='RosyBrown1')
+    # create a button to exit the application
     btn_exit = Button(master, text="Exit", fg="Black", command=master.destroy,
                       font=XL_FONT, width=20, state=NORMAL, bg='RosyBrown1')
 
+    # set the position of the buttons on the screen
     btn_addQues.place(x=65, y=220)
     btn_createPaper.place(x=65, y=275)
     btn_usrCtrl.place(x=65, y=330)
     btn_exit.place(x=65, y=385)
 
+    # set the 'Escape' key to exit the application
     master.bind('<Escape>', lambda event=None: btn_exit.invoke())
 
+    # set the 'I' and 'i' keys to invoke the inventory button
     master.bind('<I>', lambda event=None: btn_inventory.invoke())
     master.bind('<i>', lambda event=None: btn_inventory.invoke())
+
+    # set the 'S' and 's' keys to invoke the sales button
     master.bind('<S>', lambda event=None: btn_sales.invoke())
     master.bind('<s>', lambda event=None: btn_sales.invoke())
+
+    # set the 'C' and 'c' keys to invoke the shopper button
     master.bind('<c>', lambda event=None: btn_shopper.invoke())
     master.bind('<C>', lambda event=None: btn_shopper.invoke())
 
+    # run the mainloop for the application
     mainloop()
 
 
+# set up the root window
 root = tk.Tk()
-root.configure(bg="wheat")
-root.geometry("400x400")
 root.title("MCQ Creator")
-width, height = pyautogui.size()
-root.geometry('{}x{}+{}+{}'.format(1000, 800, 200, 100))
-width, height = pyautogui.size()
-root.geometry(
-    '{}x{}+{}+{}'.format(int(width / 1.35), int(height / 1.25), int(width / 9), int(height / 12)))
+root.geometry("1000x800+200+100")  # set initial window size and position
 root.configure(bg='AntiqueWhite1')
 
-canvas_width, canvas_height = width, height
+# set up canvas for displaying background image
+canvas_width, canvas_height = pyautogui.size()
 canvas = Canvas(root, width=canvas_width, height=canvas_height)
-myimage = ImageTk.PhotoImage(PIL.Image.open("..\\image\\Geometry-Header-1920x1080.jpg").resize((width * 2, height * 2)))
-canvas.create_image(0, 0, anchor=NW, image=myimage)
+myimage = ImageTk.PhotoImage(Image.open("..\\image\\Geometry-Header-1920x1080.jpg").resize((canvas_width * 2, canvas_height * 2)))
+canvas.create_image(0, 0, anchor="nw", image=myimage)
 canvas.pack()
+
+# call function to design main screen
 designMainScreen(root)
-root.mainloop()
+
+root.mainloop()  # start the GUI event loop
 
