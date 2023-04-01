@@ -26,6 +26,9 @@ TIMES_NEW_ROMAN_BIG = ('times new roman', 16, 'normal')
 NORM_VERDANA_FONT = ('verdana', 10, 'normal')
 BOLD_VERDANA_FONT = ('verdana', 11, 'normal')
 LARGE_VERDANA_FONT = ('verdana', 13, 'normal')
+XXL_FONT = ('times new roman', 25, 'normal')
+XL_FONT = ('times new roman', 20, 'normal')
+L_FONT = ('times new roman', 15, 'normal')
 
 def reset():
     total_questions_entry.delete(0, tk.END)
@@ -145,16 +148,16 @@ def donothing(event=None):
     print("Button is disabled")
     pass
 def create_MCQWindow(master):
-    new_center_window = Toplevel(master)
-    new_center_window.title("Assessment Paper Generator ")
-    new_center_window.geometry('455x440+240+200')
-    new_center_window.configure(background='wheat')
-    new_center_window.resizable(width=False, height=False)
-    new_center_window.protocol('WM_DELETE_WINDOW', donothing)
-    heading = Label(new_center_window, text="New Assessment Creation",
+    create_MCQWindow = Toplevel(master)
+    create_MCQWindow.title("Assessment Paper Generator ")
+    create_MCQWindow.geometry('455x440+700+250')
+    create_MCQWindow.configure(background='wheat')
+    create_MCQWindow.resizable(width=False, height=False)
+    create_MCQWindow.protocol('WM_DELETE_WINDOW', donothing)
+    heading = Label(create_MCQWindow, text="New Assessment Creation",
                     font=('ariel narrow', 15, 'bold'),
                     bg='wheat')
-    dataEntryFrame = Frame(new_center_window, width=200, height=130, bd=4, relief='ridge',
+    dataEntryFrame = Frame(create_MCQWindow, width=200, height=130, bd=4, relief='ridge',
                            bg='snow')
     default_text1 = StringVar(dataEntryFrame, value='')
     default_text2 = StringVar(dataEntryFrame, value='')
@@ -162,34 +165,34 @@ def create_MCQWindow(master):
     default_text4 = StringVar(dataEntryFrame, value='')
 
     # lower frame added to show the result of transactions
-    infoFrame = Frame(new_center_window, width=70, height=20, bd=4, relief='ridge')
+    infoFrame = Frame(create_MCQWindow, width=70, height=20, bd=4, relief='ridge')
     # create a Book Name label
-    pledge_item = Label(dataEntryFrame, text="Assessment Name", width=15, anchor=W, justify=LEFT,
+    name_label = Label(dataEntryFrame, text="Assessment Name", width=15, anchor=W, justify=LEFT,
                         font=NORM_FONT,
                         bg='snow')
 
-    dateofpledge = Label(dataEntryFrame, text="Assessment Date", width=15, anchor=W,
+    assessment_date_label = Label(dataEntryFrame, text="Assessment Date", width=15, anchor=W,
                          justify=LEFT,
                          font=NORM_FONT, bg='snow')
 
-    trust_name = Label(dataEntryFrame, text="Total Questions", width=15, anchor=W,
+    totQuest_label = Label(dataEntryFrame, text="Total Questions", width=15, anchor=W,
                        justify=LEFT,
                        font=NORM_FONT, bg='snow')
 
-    managerlabel = Label(dataEntryFrame, text="Low %", width=15, anchor=W, justify=LEFT,
+    low_label = Label(dataEntryFrame, text="Low %", width=15, anchor=W, justify=LEFT,
                          font=NORM_FONT,
                          bg='snow')
 
-    addresslabel = Label(dataEntryFrame, text="Medium %", width=15, anchor=W,
+    medium_label = Label(dataEntryFrame, text="Medium %", width=15, anchor=W,
                          justify=LEFT,
                          font=NORM_FONT, bg='snow')
-    highlabel = Label(dataEntryFrame, text="High %", width=15, anchor=W,
+    high_label = Label(dataEntryFrame, text="High %", width=15, anchor=W,
                          justify=LEFT,
                          font=NORM_FONT, bg='snow')
-    totolMarkslabel = Label(dataEntryFrame, text="Total Marks", width=15, anchor=W,
+    totolMarks_label = Label(dataEntryFrame, text="Total Marks", width=15, anchor=W,
                          justify=LEFT,
                          font=NORM_FONT, bg='snow')
-    durationlabel = Label(dataEntryFrame, text="Duration", width=15, anchor=W,
+    duration_label = Label(dataEntryFrame, text="Duration", width=15, anchor=W,
                          justify=LEFT,
                          font=NORM_FONT, bg='snow')
 
@@ -199,28 +202,28 @@ def create_MCQWindow(master):
 
     heading.grid(row=0, column=0, columnspan=2)
     dataEntryFrame.grid(row=1, column=1, padx=10, pady=8)
-    pledge_item.grid(row=0, column=0, pady=5)
-    dateofpledge.grid(row=1, column=0, pady=5)
-    trust_name.grid(row=2, column=0, pady=5)
-    managerlabel.grid(row=3, column=0, pady=5)
-    addresslabel.grid(row=4, column=0, pady=5)
-    highlabel.grid(row=5, column=0, pady=5)
-    totolMarkslabel.grid(row=6, column=0, pady=5)
-    durationlabel.grid(row=7, column=0, pady=5)
+    name_label.grid(row=0, column=0, pady=5)
+    assessment_date_label.grid(row=1, column=0, pady=5)
+    totQuest_label.grid(row=2, column=0, pady=5)
+    low_label.grid(row=3, column=0, pady=5)
+    medium_label.grid(row=4, column=0, pady=5)
+    high_label.grid(row=5, column=0, pady=5)
+    totolMarks_label.grid(row=6, column=0, pady=5)
+    duration_label.grid(row=7, column=0, pady=5)
 
     # create a text entry box
     # for typing the information
-    pledge_text = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow',
+    assessmentName_text = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow',
                         textvariable=default_text1)
 
-    trust_menu = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow',
+    totQuest_text = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow',
           textvariable=default_text2)
 
     cal = DateEntry(dataEntryFrame, width=28, font=NORM_FONT, date_pattern='dd/MM/yyyy', bg='light yellow',
                     anchor=W, justify=LEFT)
-    manager_text = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow',
+    lowPerc_text = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow',
                          textvariable=default_text2)
-    address_text = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow',
+    mediumPerc_text = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow',
                          textvariable=default_text3)
     highPerc_text = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow',
                          textvariable=default_text3)
@@ -229,22 +232,22 @@ def create_MCQWindow(master):
     duration_text = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow',
                          textvariable=default_text3)
 
-    pledge_text.grid(row=0, column=1, pady=5)
+    assessmentName_text.grid(row=0, column=1, pady=5)
     cal.grid(row=1, column=1, pady=5)
-    trust_menu.grid(row=2, column=1, pady=5)
-    manager_text.grid(row=3, column=1, pady=5)
-    address_text.grid(row=4, column=1, pady=5)
+    totQuest_text.grid(row=2, column=1, pady=5)
+    lowPerc_text.grid(row=3, column=1, pady=5)
+    mediumPerc_text.grid(row=4, column=1, pady=5)
     highPerc_text.grid(row=5, column=1, pady=5)
     totMarks_text.grid(row=6, column=1, pady=5)
     duration_text.grid(row=7, column=1, pady=5)
     # ---------------------------------Button Frame Start----------------------------------------
-    buttonFrame = Frame(new_center_window, width=200, height=100, bd=4, relief='ridge')
+    buttonFrame = Frame(create_MCQWindow, width=200, height=100, bd=4, relief='ridge')
     buttonFrame.grid(row=20, column=1, pady=8)
     submit_deposit = Button(buttonFrame)
 
     #insert_result = partial(registerlocalCenter, trust_nametext, pledge_text, infolabel)
 
-    # create a Save Button and place into the new_center_window window
+    # create a Save Button and place into the create_MCQWindow window
     submit_deposit.configure(text="Generate", fg="Black", command=NONE,
                              font=NORM_FONT, width=8, bg='light cyan', underline=0, state=NORMAL)
     submit_deposit.grid(row=0, column=0)
@@ -257,9 +260,9 @@ def create_MCQWindow(master):
                    font=NORM_FONT, width=8, bg='light cyan', underline=0)
     clear.grid(row=0, column=1)
 
-    # create a Cancel Button and place into the new_center_window window
-    #cancel_Result = partial(destroyWindow, new_center_window)
-    cancel = Button(buttonFrame, text="Close", fg="Black", command=NONE,
+    # create a Cancel Button and place into the create_MCQWindow window
+    #cancel_Result = partial(destroyWindow, create_MCQWindow)
+    cancel = Button(buttonFrame, text="Close", fg="Black", command=master.destroy,
                     font=NORM_FONT, width=8, bg='light cyan', underline=0)
     cancel.grid(row=0, column=2)
     # ---------------------------------Button Frame End----------------------------------------
@@ -267,13 +270,13 @@ def create_MCQWindow(master):
     infoFrame.grid(row=21, column=1, pady=5)
     infolabel.grid(row=0, column=0, padx=2, pady=3)
 
-    new_center_window.bind('<Return>', lambda event=None: submit_deposit.invoke())
-    new_center_window.bind('<Alt-d>', lambda event=None: submit_deposit.invoke())
-    new_center_window.bind('<Alt-c>', lambda event=None: cancel.invoke())
-    new_center_window.bind('<Alt-r>', lambda event=None: clear.invoke())
+    create_MCQWindow.bind('<Return>', lambda event=None: submit_deposit.invoke())
+    create_MCQWindow.bind('<Alt-d>', lambda event=None: submit_deposit.invoke())
+    create_MCQWindow.bind('<Alt-c>', lambda event=None: cancel.invoke())
+    create_MCQWindow.bind('<Alt-r>', lambda event=None: clear.invoke())
 
-    new_center_window.focus()
-    new_center_window.grab_set()
+    create_MCQWindow.focus()
+    create_MCQWindow.grab_set()
     #mainloop()
     
 def insert_questions(master):
@@ -282,7 +285,7 @@ def insert_questions(master):
     headingForm = "Add Assessment Questions"
     insertQ_window.title("Question Bank Creation ")
 
-    insertQ_window.geometry('760x615+250+150')
+    insertQ_window.geometry('760x615+700+250')
     insertQ_window.configure(background='wheat')
     insertQ_window.resizable(width=True, height=True)
 
@@ -399,30 +402,60 @@ def insert_questions(master):
     insertQ_window.grab_set()
     #mainloop()
 
+def designMainScreen(master):
+    labelFrame = Label(master, text="Assessment Creator", justify=CENTER,
+                       font=XXL_FONT,
+                       fg='black')
+    # labelFrame.place(x=200, y=10)
+    result_btnAddQuestion = partial(insert_questions,master)
+    btn_addQues = Button(master, text="Add Question", fg="Black", command=result_btnAddQuestion,
+                           font=XL_FONT, width=20, state=NORMAL, bg='RosyBrown1')
+    # labelFrame.place(x=200, y=10)
+    result_createPaper = partial(create_MCQWindow,master)
+    btn_createPaper = Button(master, text="Create Paper", fg="Black", command=result_createPaper,
+                         font=XL_FONT, width=20, state=NORMAL, bg='RosyBrown1')
+
+    btn_usrCtrl = Button(master, text="User Control", fg="Black", command=None,
+                             font=XL_FONT, width=20, state=NORMAL, bg='RosyBrown1')
+    btn_exit = Button(master, text="Exit", fg="Black", command=master.destroy,
+                      font=XL_FONT, width=20, state=NORMAL, bg='RosyBrown1')
+
+    btn_addQues.place(x=65, y=220)
+    btn_createPaper.place(x=65, y=275)
+    btn_usrCtrl.place(x=65, y=330)
+    btn_exit.place(x=65, y=385)
+
+    master.bind('<Escape>', lambda event=None: btn_exit.invoke())
+
+    master.bind('<I>', lambda event=None: btn_inventory.invoke())
+    master.bind('<i>', lambda event=None: btn_inventory.invoke())
+    master.bind('<S>', lambda event=None: btn_sales.invoke())
+    master.bind('<s>', lambda event=None: btn_sales.invoke())
+    master.bind('<c>', lambda event=None: btn_shopper.invoke())
+    master.bind('<C>', lambda event=None: btn_shopper.invoke())
+
+    mainloop()
+
+
 root = tk.Tk()
 root.configure(bg="wheat")
 root.geometry("400x400")
 root.title("MCQ Creator")
 width, height = pyautogui.size()
 root.geometry('{}x{}+{}+{}'.format(1000, 800, 200, 100))
-# canvas designed to display the library image on main screen
-canvas_width, canvas_height = 1000, 800
+width, height = pyautogui.size()
+root.geometry(
+    '{}x{}+{}+{}'.format(int(width / 1.35), int(height / 1.25), int(width / 9), int(height / 12)))
+root.configure(bg='AntiqueWhite1')
+
+canvas_width, canvas_height = width, height
 canvas = Canvas(root, width=canvas_width, height=canvas_height)
-
-# Open the image file as a PIL Image object
-pil_image = Image.open("..\\image\\3-4.jpg")
-
-# Resize the image using the resize() method
-resized_image = pil_image.resize((1000, 800))
-
-# Create a PhotoImage object from the resized PIL Image
-myimage = ImageTk.PhotoImage(resized_image)
-
+myimage = ImageTk.PhotoImage(PIL.Image.open("..\\image\\Geometry-Header-1920x1080.jpg").resize((width * 2, height * 2)))
 canvas.create_image(0, 0, anchor=NW, image=myimage)
 canvas.pack()
 
-create_MCQWindow(root)
-insert_questions(root)
+designMainScreen(root)
+
 """
 total_questions_label = tk.Label(root, text="Total Questions", font=("times new roman", 14), bg="wheat", anchor="w")
 complexity_label = tk.Label(root, text="% Distribution for Exam", font=("times new roman", 13), bg="wheat", anchor="w")
