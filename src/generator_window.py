@@ -30,15 +30,21 @@ XXL_FONT = ('times new roman', 25, 'normal')
 XL_FONT = ('times new roman', 20, 'normal')
 L_FONT = ('times new roman', 15, 'normal')
 
-def reset():
+def reset_MCQCreatorWindow(assessmentName_text,total_questions_entry,low_complexity_entry,medium_complexity_entry,high_complexity_entry,duration_entry,totalMarks_entry):
+    assessmentName_text.delete(0, tk.END)
     total_questions_entry.delete(0, tk.END)
     low_complexity_entry.delete(0, tk.END)
     medium_complexity_entry.delete(0, tk.END)
     high_complexity_entry.delete(0, tk.END)
-    total_questions_entry.insert(0, "0")
-    low_complexity_entry.insert(0, "0")
-    medium_complexity_entry.insert(0, "0")
-    high_complexity_entry.insert(0, "0")
+    duration_entry.delete(0, tk.END)
+    totalMarks_entry.delete(0, tk.END)
+    assessmentName_text.insert(0, "")
+    total_questions_entry.insert(0, "")
+    low_complexity_entry.insert(0, "")
+    medium_complexity_entry.insert(0, "")
+    high_complexity_entry.insert(0, "")
+    duration_entry.insert(0, "")
+    totalMarks_entry.insert(0, "")
 
 def close_app():
     root.destroy()
@@ -213,24 +219,15 @@ def create_MCQWindow(master):
 
     # create a text entry box
     # for typing the information
-    assessmentName_text = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow',
-                        textvariable=default_text1)
-
-    totQuest_text = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow',
-          textvariable=default_text2)
-
+    assessmentName_text = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow')
     cal = DateEntry(dataEntryFrame, width=28, font=NORM_FONT, date_pattern='dd/MM/yyyy', bg='light yellow',
                     anchor=W, justify=LEFT)
-    lowPerc_text = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow',
-                         textvariable=default_text2)
-    mediumPerc_text = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow',
-                         textvariable=default_text3)
-    highPerc_text = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow',
-                         textvariable=default_text3)
-    totMarks_text = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow',
-                         textvariable=default_text3)
-    duration_text = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow',
-                         textvariable=default_text3)
+    totQuest_text = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow')
+    lowPerc_text = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow')
+    mediumPerc_text = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow')
+    highPerc_text = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow')
+    totMarks_text = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow')
+    duration_text = Entry(dataEntryFrame, width=30, font=NORM_FONT, bg='light yellow')
 
     assessmentName_text.grid(row=0, column=1, pady=5)
     cal.grid(row=1, column=1, pady=5)
@@ -240,28 +237,25 @@ def create_MCQWindow(master):
     highPerc_text.grid(row=5, column=1, pady=5)
     totMarks_text.grid(row=6, column=1, pady=5)
     duration_text.grid(row=7, column=1, pady=5)
+
     # ---------------------------------Button Frame Start----------------------------------------
     buttonFrame = Frame(create_MCQWindow, width=200, height=100, bd=4, relief='ridge')
     buttonFrame.grid(row=20, column=1, pady=8)
-    submit_deposit = Button(buttonFrame)
+    generate_deposit = Button(buttonFrame)
 
-    #insert_result = partial(registerlocalCenter, trust_nametext, pledge_text, infolabel)
+    insert_result = partial(generate_check,totQuest_text,lowPerc_text, mediumPerc_text,highPerc_text)
 
     # create a Save Button and place into the create_MCQWindow window
-    submit_deposit.configure(text="Generate", fg="Black", command=NONE,
+    generate_deposit.configure(text="Generate", fg="Black", command=insert_result,
                              font=NORM_FONT, width=8, bg='light cyan', underline=0, state=NORMAL)
-    submit_deposit.grid(row=0, column=0)
-    """
-    clear_result = partial(clearRegisterPledgeForm,
-                           pledge_text,
-                           trust_nametext, infolabel)
-    """
-    clear = Button(buttonFrame, text="Reset", fg="Black", command=NONE,
+    generate_deposit.grid(row=0, column=0)
+
+    clear_result = partial(reset_MCQCreatorWindow,assessmentName_text,totQuest_text,lowPerc_text, mediumPerc_text,highPerc_text,duration_text,totMarks_text)
+    reset_button = Button(buttonFrame, text="Reset", fg="Black", command=clear_result,
                    font=NORM_FONT, width=8, bg='light cyan', underline=0)
-    clear.grid(row=0, column=1)
+    reset_button.grid(row=0, column=1)
 
     # create a Cancel Button and place into the create_MCQWindow window
-    #cancel_Result = partial(destroyWindow, create_MCQWindow)
     cancel = Button(buttonFrame, text="Close", fg="Black", command=master.destroy,
                     font=NORM_FONT, width=8, bg='light cyan', underline=0)
     cancel.grid(row=0, column=2)
@@ -453,41 +447,6 @@ canvas = Canvas(root, width=canvas_width, height=canvas_height)
 myimage = ImageTk.PhotoImage(PIL.Image.open("..\\image\\Geometry-Header-1920x1080.jpg").resize((width * 2, height * 2)))
 canvas.create_image(0, 0, anchor=NW, image=myimage)
 canvas.pack()
-
 designMainScreen(root)
-
-"""
-total_questions_label = tk.Label(root, text="Total Questions", font=("times new roman", 14), bg="wheat", anchor="w")
-complexity_label = tk.Label(root, text="% Distribution for Exam", font=("times new roman", 13), bg="wheat", anchor="w")
-low_complexity_label = tk.Label(root, text="Low Complexity", font=("times new roman", 14), bg="wheat", anchor="w")
-medium_complexity_label = tk.Label(root, text="Medium Complexity", font=("times new roman", 14), bg="wheat", anchor="w")
-high_complexity_label = tk.Label(root, text="High Complexity", font=("times new roman", 14), bg="wheat", anchor="w")
-
-total_questions_entry = tk.Entry(root, font=("times new roman", 14), width=20)
-low_complexity_entry = tk.Entry(root, font=("times new roman", 14), width=20)
-medium_complexity_entry = tk.Entry(root, font=("times new roman", 14), width=20)
-high_complexity_entry = tk.Entry(root, font=("times new roman", 14), width=20)
-
-validateAndCreate = partial(generate_check,total_questions_entry,low_complexity_entry,medium_complexity_entry,high_complexity_entry)
-generate_button = tk.Button(root, text="Generate", font=("Times New Roman", 14),bg="light cyan", fg="black", height=2, width=12,command = validateAndCreate)
-reset_button = tk.Button(root, text="Reset", font=("Times New Roman", 14),bg="light cyan", fg="black", height=2, width=12,command=reset)
-
-total_questions_label.grid(row=0, column=0, padx=10, pady=10, sticky="w")
-complexity_label.grid(row=1, column=0, padx=10, pady=10, sticky="w")
-low_complexity_label.grid(row=2, column=0, padx=10, pady=10, sticky="w")
-medium_complexity_label.grid(row=3, column=0, padx=10, pady=10, sticky="w")
-high_complexity_label.grid(row=4, column=0, padx=10, pady=10, sticky="w")
-
-total_questions_entry.grid(row=0, column=1, padx=10, pady=10)
-low_complexity_entry.grid(row=2, column=1, padx=10, pady=10)
-medium_complexity_entry.grid(row=3, column=1, padx=10, pady=10)
-high_complexity_entry.grid(row=4, column=1, padx=10, pady=10)
-
-generate_button.grid(row=5, column=0, padx=10, pady=10, sticky="w")
-reset_button.grid(row=5, column=1, padx=10, pady=10, sticky="e")
-
-"""
-
-
 root.mainloop()
 
