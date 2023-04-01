@@ -13,6 +13,10 @@ import random
 from functools import partial
 import shutil
 import os
+import pyautogui
+from PIL import ImageTk, Image
+import PIL.Image
+
 
 # defining fonts for usage in project
 NORM_FONT = ('times new roman', 13, 'normal')
@@ -399,6 +403,24 @@ root = tk.Tk()
 root.configure(bg="wheat")
 root.geometry("400x400")
 root.title("MCQ Creator")
+width, height = pyautogui.size()
+root.geometry('{}x{}+{}+{}'.format(1000, 800, 200, 100))
+# canvas designed to display the library image on main screen
+canvas_width, canvas_height = 1000, 800
+canvas = Canvas(root, width=canvas_width, height=canvas_height)
+
+# Open the image file as a PIL Image object
+pil_image = Image.open("..\\image\\3-4.jpg")
+
+# Resize the image using the resize() method
+resized_image = pil_image.resize((1000, 800))
+
+# Create a PhotoImage object from the resized PIL Image
+myimage = ImageTk.PhotoImage(resized_image)
+
+canvas.create_image(0, 0, anchor=NW, image=myimage)
+canvas.pack()
+
 create_MCQWindow(root)
 insert_questions(root)
 """
@@ -432,5 +454,7 @@ generate_button.grid(row=5, column=0, padx=10, pady=10, sticky="w")
 reset_button.grid(row=5, column=1, padx=10, pady=10, sticky="e")
 
 """
+
+
 root.mainloop()
 
