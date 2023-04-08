@@ -23,6 +23,7 @@ import openpyxl
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Alignment
+from openpyxl.styles import Font
 
 # Importing DateEntry class from tkcalendar module
 from tkcalendar import DateEntry
@@ -57,6 +58,35 @@ LARGE_VERDANA_FONT = ('verdana', 13, 'normal')
 XXL_FONT = ('times new roman', 25, 'normal')
 XL_FONT = ('times new roman', 20, 'normal')
 L_FONT = ('times new roman', 15, 'normal')
+
+
+def initilize_database():
+    # Specify the name of the Excel workbook
+    file_name = "Master.xlsx"
+
+    # Check if the file already exists
+    if os.path.isfile(file_name):
+        print("File already exists")
+    else:
+        # Create a new workbook
+        workbook = Workbook()
+
+        # Create two sheets
+        sheet1 = workbook.create_sheet("C_Bank")
+        sheet2 = workbook.create_sheet("C++_Bank")
+
+        # Add column headers to each sheet
+        columns = ["Serial No.", "Question Description", "Complexity", "Topic", "Mark", "Answer"]
+        for sheet in [sheet1, sheet2]:
+            sheet.append(columns)
+            # Set font for column headers
+            for cell in sheet[1]:
+                cell.font = Font(name='Calibri', size=10)
+
+        # Save the workbook
+        workbook.save(filename=file_name)
+        print("File created successfully")
+
 
 # Function to reset the fields in the MCQ Creator window
 def reset_mcq_creator_window(assessment_name_entry, total_questions_entry, low_complexity_entry, medium_complexity_entry, high_complexity_entry, duration_entry, total_marks_entry):
@@ -587,7 +617,7 @@ canvas = Canvas(root, width=canvas_width, height=canvas_height)
 myimage = ImageTk.PhotoImage(Image.open("..\\image\\Geometry-Header-1920x1080.jpg").resize((canvas_width * 2, canvas_height * 2)))
 canvas.create_image(0, 0, anchor="nw", image=myimage)
 canvas.pack()
-
+initilize_database()
 # call function to design main screen
 designMainScreen(root)
 
