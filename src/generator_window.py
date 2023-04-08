@@ -75,6 +75,18 @@ def reset_mcq_creator_window(assessment_name_entry, total_questions_entry, low_c
     duration_entry.insert(0, "")
     total_marks_entry.insert(0, "")
 
+def reset_addQ_window(question_entry, subject_Text, topic_Text, complexity_dropdown, marks_Text, answer_Text):
+    question_entry.delete(0, tk.END)
+    subject_Text.delete(0, tk.END)
+    topic_Text.delete(0, tk.END)
+    marks_Text.delete(0, tk.END)
+    answer_Text.delete(0, tk.END)
+    question_entry.insert(0, "")
+    subject_Text.insert(0, "")
+    marks_Text.insert(0, "")
+    topic_Text.insert(0, "")
+    answer_Text.insert(0, "")
+
 def close_app():
     root.destroy()
 
@@ -331,7 +343,7 @@ def create_MCQWindow(master):
     reset_button.grid(row=0, column=1)
 
     # create a Cancel Button and place into the create_MCQWindow window
-    cancel = Button(buttonFrame, text="Close", fg="Black", command=master.destroy,
+    cancel = Button(buttonFrame, text="Close", fg="Black", command=create_MCQWindow.destroy,
                     font=NORM_FONT, width=8, bg='light cyan', underline=0)
     cancel.grid(row=0, column=2)
     # ---------------------------------Button Frame End----------------------------------------
@@ -348,6 +360,56 @@ def create_MCQWindow(master):
     create_MCQWindow.grab_set()
     #mainloop()
     
+def insert_question_toDb(question_entry, subject_Text, topic_Text, complexity_dropdown, marks_Text, answer_Text):
+    # Get the entered data
+    question = question_entry.get("1.0", "end").strip()  # Get the question text from the question entry field
+    complexity = complexity_dropdown.get()  # Get the complexity level from the complexity dropdown
+    topic = topic_Text.get().strip()  # Get the topic from the topic entry field
+    marks = marks_Text.get().strip()  # Get the marks from the marks entry field
+    answer = answer_Text.get().strip()  # Get the answer text from the answer entry field
+
+    # Load the existing workbook
+    workbook = openpyxl.load_workbook("Master.xlsx")
+
+    # Get the active worksheet based on the selected topic
+    sheet = workbook.active
+    if topic == 'C Programming':
+        sheet = workbook['C_Bank']
+    elif topic == 'C++ Programming':
+        sheet = workbook['C++_Bank']
+    else:
+        pass  # Do nothing if the topic is not recognized
+
+    # Get the last row of the worksheet
+    last_row = sheet.max_row
+
+    # Increase the serial number
+    if last_row == 1:
+        serial_number = 1
+    else:
+        serial_number = last_row + 1
+
+    # Write the data to the sheet
+    sheet.cell(row=last_row + 1, column=1, value=serial_number)  # Write the serial number to column 1
+    sheet.cell(row=last_row + 1, column=2, value=question)  # Write the question to column 2
+    sheet.cell(row=last_row + 1, column=3, value=complexity)  # Write the complexity level to column 3
+    sheet.cell(row=last_row + 1, column=4, value=topic)  # Write the topic to column 4
+    sheet.cell(row=last_row + 1, column=5, value=marks)  # Write the marks to column 5
+    sheet.cell(row=last_row + 1, column=6, value=answer)  # Write the answer to column 6
+
+    # Set the font for the new row
+    font = openpyxl.styles.Font(name='Times New Roman', size=13)
+    for cell in sheet[last_row + 1]:
+        cell.font = font
+
+    # Save the workbook
+    workbook.save("Master.xlsx")
+
+    reset_addQ_window(question_entry, subject_Text, topic_Text, complexity_dropdown, marks_Text, answer_Text)
+
+    # Show a success message
+    import tkinter.messagebox
+    tkinter.messagebox.showinfo("Success", "Data saved successfully!")
 
 # define a function to create a new window to insert questions
 def insert_questions(master):
@@ -357,7 +419,7 @@ def insert_questions(master):
     # set the window title and size, and background color
     headingForm = "Add Assessment Questions"
     insertQ_window.title("Question Bank Creation ")
-    insertQ_window.geometry('760x615+700+250')
+    insertQ_window.geometry('760x640+600+200')
     insertQ_window.configure(background='wheat')
     insertQ_window.resizable(width=True, height=True)
 
@@ -379,19 +441,18 @@ def insert_questions(master):
 
     # place the two frames in the window
     right_frame.grid(row=1, column=1, padx=2, pady=5, sticky=W)
-    left_frame.grid(row=2, column=1, padx=2, pady=5, sticky=W)
+    left_frame.grid(row=2, column=1, padx=2, pady=1, sticky=W)
 
     # create a frame to display a message, and place it in the window
     infoFrame = Frame(insertQ_window, width=200, height=100, bd=8, relief='ridge', bg='light yellow')
-    infoFrame.grid(row=4, column=0, padx=90, pady=5, columnspan=4, sticky=W)
+    infoFrame.grid(row=4, column=0, padx=90, pady=1, columnspan=4, sticky=W)
 
     # ---------------------------------Preparing display Area - start ---------------------------------
 
     # create a drop down box to select the complexity level, and place it in the left frame
-    itemnametext = StringVar(left_frame)
-    itemnamelabel = Label(left_frame, text="Complexity", width=12, anchor=W, justify=LEFT, font=NORM_FONT,
+    complexitylabel = Label(left_frame, text="Complexity", width=12, anchor=W, justify=LEFT, font=NORM_FONT,
                           bg='light yellow')
-    itemnamelabel.grid(row=0, column=1, padx=10, pady=5)
+    complexitylabel.grid(row=0, column=1, padx=10, pady=5)
 
     complexities = ["High", "Medium", "Low"]
     complexity_dropdown = tk.ttk.Combobox(left_frame, values=complexities, state="readonly",width=23, justify=LEFT, font=NORM_FONT)
@@ -399,40 +460,34 @@ def insert_questions(master):
     complexity_dropdown.grid(row=0, column=2, pady=5)
 
     # create a text box to enter the subject of the question, and place it in the left frame
-    descriptiontext = StringVar(left_frame)
-    descriptionlabel = Label(left_frame, text="Subject", width=12, anchor=W, justify=LEFT,
+    subjectlabel = Label(left_frame, text="Subject", width=12, anchor=W, justify=LEFT,
                              font=NORM_FONT,
                              bg='light yellow')
-    descriptionlabel.grid(row=0, column=3, padx=10, pady=5)
-    description_Text = Entry(left_frame, text="", width=25, justify=LEFT, textvariable=descriptiontext,
-                             font=NORM_FONT,
-                             bg='snow')
-    description_Text.grid(row=0, column=4, padx=5, pady=5)
+    subjectlabel.grid(row=0, column=3, padx=10, pady=5)
+    subjects = ["C Programming", "C++ Programming"]
+    subject_Text = tk.ttk.Combobox(left_frame, values=subjects, state="readonly",width=23, justify=LEFT, font=NORM_FONT)
+    subject_Text.grid(row=0, column=4, padx=5, pady=5)
 
-    # Display Father name - Row 5
-
-    # Display Country Name - Row 5
-    quantitytext = StringVar(left_frame)
-    quantityLabel = Label(left_frame, text="Topic", width=12, anchor=W, justify=LEFT,
+    topicLabel = Label(left_frame, text="Topic", width=12, anchor=W, justify=LEFT,
                           font=NORM_FONT,
                           bg='light yellow')
-    quantityLabel.grid(row=1, column=1, padx=10, pady=5)
-    quantity_Text = Entry(left_frame, text="", width=25, justify=LEFT, textvariable=quantitytext,
-                          font=NORM_FONT,
-                          bg='snow')
-    quantity_Text.grid(row=1, column=2, pady=5)
+    topicLabel.grid(row=1, column=1, padx=10, pady=5)
+    topic_Text = Entry(left_frame, text="", width=25, justify=LEFT,font=NORM_FONT,bg='snow')
+    topic_Text.grid(row=1, column=2, pady=5)
 
-    unitpricetext = StringVar(left_frame)
-    unitpriceLabel = Label(left_frame, text="Marks", width=12, anchor=W, justify=LEFT,
+    marksLabel = Label(left_frame, text="Marks", width=12, anchor=W, justify=LEFT,
                            font=NORM_FONT,
                            bg='light yellow')
-    unitpriceLabel.grid(row=1, column=3, padx=10, pady=5)
-    unitprice_Text = Entry(left_frame, text="", textvariable=unitpricetext, width=25, justify=LEFT,
+    marksLabel.grid(row=1, column=3, padx=10, pady=5)
+    marks_Text = Entry(left_frame, text="", width=25, justify=LEFT, font=NORM_FONT,bg='snow')
+    marks_Text.grid(row=1, column=4, padx=5, pady=5)
+    
+    answerLabel = Label(left_frame, text="Answer", width=12, anchor=W, justify=LEFT,
                            font=NORM_FONT,
-                           bg='snow')
-    unitprice_Text.grid(row=1, column=4, padx=5, pady=5)
-
-    racktext = StringVar(left_frame)
+                           bg='light yellow')
+    answerLabel.grid(row=2, column=1, padx=10, pady=5)
+    answer_Text = Entry(left_frame, text="", width=25, justify=LEFT, font=NORM_FONT,bg='snow')
+    answer_Text.grid(row=2, column=2, padx=5, pady=5)
 
     infoLabel = Label(infoFrame, text="Press Save button to save the modified records", width=60,
                       anchor='center',
@@ -447,10 +502,9 @@ def insert_questions(master):
     buttonFrame.grid(row=3, column=1, pady=8)
     submit_deposit = Button(buttonFrame)
 
-    # insert_result = partial(registerlocalCenter, trust_nametext, pledge_text, infolabel)
+    insert_result = partial(insert_question_toDb,question_entry, subject_Text, topic_Text,complexity_dropdown,marks_Text,answer_Text)
 
-    # create a Save Button and place into the new_center_window window
-    submit_deposit.configure(text="Save", fg="Black", command=NONE,
+    submit_deposit.configure(text="Save", fg="Black", command=insert_result,
                              font=NORM_FONT, width=8, bg='light cyan', underline=0, state=NORMAL)
     submit_deposit.grid(row=0, column=0)
     """
@@ -462,14 +516,12 @@ def insert_questions(master):
                    font=NORM_FONT, width=8, bg='light cyan', underline=0)
     clear.grid(row=0, column=1)
 
-    # create a Cancel Button and place into the new_center_window window
-    # cancel_Result = partial(destroyWindow, new_center_window)
-    cancel = Button(buttonFrame, text="Close", fg="Black", command=NONE,
+    cancel = Button(buttonFrame, text="Close", fg="Black", command=insertQ_window.destroy,
                     font=NORM_FONT, width=8, bg='light cyan', underline=0)
     cancel.grid(row=0, column=2)
     # ---------------------------------Button Frame End----------------------------------------
 
-    insertQ_window.bind('<Return>', lambda event=None: submit.invoke())
+    insertQ_window.bind('<Return>', lambda event=None: submit_deposit.invoke())
     insertQ_window.bind('<Alt-c>', lambda event=None: cancel.invoke())
     insertQ_window.bind('<Alt-r>', lambda event=None: self.print_button.invoke())
 
