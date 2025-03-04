@@ -381,15 +381,15 @@ def create_MCQWindow(master):
     infoFrame.grid(row=21, column=1, pady=5)
     infolabel.grid(row=0, column=0, padx=2, pady=3)
 
-    create_MCQWindow.bind('<Return>', lambda event=None: submit_deposit.invoke())
-    create_MCQWindow.bind('<Alt-d>', lambda event=None: submit_deposit.invoke())
+    create_MCQWindow.bind('<Return>', lambda event=None: generate_deposit.invoke())
+    create_MCQWindow.bind('<Alt-d>', lambda event=None: generate_deposit.invoke())
     create_MCQWindow.bind('<Alt-c>', lambda event=None: cancel.invoke())
-    create_MCQWindow.bind('<Alt-r>', lambda event=None: clear.invoke())
+    create_MCQWindow.bind('<Alt-r>', lambda event=None: reset_button.invoke())
 
     create_MCQWindow.focus()
     create_MCQWindow.grab_set()
     #mainloop()
-    
+
 def insert_question_toDb(question_entry, subject_Text, topic_Text, complexity_dropdown, marks_Text, answer_Text):
     # Get the entered data
     question = question_entry.get("1.0", "end").strip()  # Get the question text from the question entry field
@@ -443,121 +443,134 @@ def insert_question_toDb(question_entry, subject_Text, topic_Text, complexity_dr
 
 # define a function to create a new window to insert questions
 def insert_questions(master):
+    import tkinter as tk
+    from tkinter import Toplevel, Label, Frame, Entry, Text, LEFT, W, E, CENTER
+    import tkinter.ttk
+    from functools import partial
+
+    # Make sure NORM_FONT is defined; adjust as needed.
+    NORM_FONT = ("Helvetica", 10)
+
     # create a new window
     insertQ_window = Toplevel(master)
-
-    # set the window title and size, and background color
     headingForm = "Add Assessment Questions"
-    insertQ_window.title("Question Bank Creation ")
+    insertQ_window.title("Question Bank Creation")
     insertQ_window.geometry('760x640+600+200')
     insertQ_window.configure(background='wheat')
     insertQ_window.resizable(width=True, height=True)
 
-    # create a heading label and place it in the window
+    # Heading label
     heading = Label(insertQ_window, text=headingForm, font=('ariel narrow', 15, 'bold'), bg='wheat')
     heading.grid(row=0, column=0, columnspan=3)
 
-    # create two frames to place the UI elements in
+    # Right frame for question and options
     right_frame = Frame(insertQ_window, width=600, bd=6, relief='ridge', bg='light yellow')
+    right_frame.grid(row=1, column=1, padx=2, pady=5, sticky="W")
+
+    # Question Description Label and Text
+    question_label = Label(right_frame, text="Question Description :", width=20, anchor=W, justify=LEFT,
+                           font=NORM_FONT, bg='light yellow')
+    question_label.grid(row=0, column=0, padx=10, pady=5, sticky="W")
+    question_entry = Text(right_frame, height=7, width=80, font=NORM_FONT, bg='white')
+    question_entry.grid(row=1, column=0, padx=10, pady=5, columnspan=2, sticky="W")
+
+    # Create a sub-frame for the options to ensure proper alignment
+    options_frame = Frame(right_frame, bg='light yellow')
+    options_frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="W")
+
+    # First row: Option A and Option B
+    opt_a_label = Label(options_frame, text="Option A", font=NORM_FONT, bg='light yellow')
+    opt_a_label.grid(row=0, column=0, padx=(0,5), pady=5, sticky=E)
+    opt_a_entry = Entry(options_frame, width=25, font=NORM_FONT, bg='white')
+    opt_a_entry.grid(row=0, column=1, padx=(0,10), pady=5, sticky=W)
+
+    opt_b_label = Label(options_frame, text="Option B", font=NORM_FONT, bg='light yellow')
+    opt_b_label.grid(row=0, column=2, padx=(0,5), pady=5, sticky=E)
+    opt_b_entry = Entry(options_frame, width=25, font=NORM_FONT, bg='white')
+    opt_b_entry.grid(row=0, column=3, padx=(0,10), pady=5, sticky=W)
+
+    # Second row: Option C and Option D
+    opt_c_label = Label(options_frame, text="Option C", font=NORM_FONT, bg='light yellow')
+    opt_c_label.grid(row=1, column=0, padx=(0,5), pady=5, sticky=E)
+    opt_c_entry = Entry(options_frame, width=25, font=NORM_FONT, bg='white')
+    opt_c_entry.grid(row=1, column=1, padx=(0,10), pady=5, sticky=W)
+
+    opt_d_label = Label(options_frame, text="Option D", font=NORM_FONT, bg='light yellow')
+    opt_d_label.grid(row=1, column=2, padx=(0,5), pady=5, sticky=E)
+    opt_d_entry = Entry(options_frame, width=25, font=NORM_FONT, bg='white')
+    opt_d_entry.grid(row=1, column=3, padx=(0,10), pady=5, sticky=W)
+
+    # Left frame for additional details
     left_frame = Frame(insertQ_window, width=600, bd=6, relief='ridge', bg='light yellow')
+    left_frame.grid(row=2, column=1, padx=2, pady=1, sticky="W")
 
-    # create a label and text box to enter the question in the right frame, and place them in the frame
-    question_label =  Label(right_frame, text="Question Description :", width=20, anchor=W, justify=LEFT,
-                          font=NORM_FONT,
-                          bg='light yellow')
-    question_label.grid(row=0, column=0, padx=10, pady=10, sticky="W")
-    question_entry = tk.Text(right_frame, height=15, width=80, font=NORM_FONT)
-    question_entry.grid(row=1, column=0, padx=10, pady=10, sticky="W")
-
-    # place the two frames in the window
-    right_frame.grid(row=1, column=1, padx=2, pady=5, sticky=W)
-    left_frame.grid(row=2, column=1, padx=2, pady=1, sticky=W)
-
-    # create a frame to display a message, and place it in the window
-    infoFrame = Frame(insertQ_window, width=200, height=100, bd=8, relief='ridge', bg='light yellow')
-    infoFrame.grid(row=4, column=0, padx=90, pady=1, columnspan=4, sticky=W)
-
-    # ---------------------------------Preparing display Area - start ---------------------------------
-
-    # create a drop down box to select the complexity level, and place it in the left frame
-    complexitylabel = Label(left_frame, text="Complexity", width=12, anchor=W, justify=LEFT, font=NORM_FONT,
-                          bg='light yellow')
+    complexitylabel = Label(left_frame, text="Complexity", width=12, anchor=W, justify=LEFT,
+                            font=NORM_FONT, bg='light yellow')
     complexitylabel.grid(row=0, column=1, padx=10, pady=5)
-
     complexities = ["High", "Medium", "Low"]
-    complexity_dropdown = tk.ttk.Combobox(left_frame, values=complexities, state="readonly",width=23, justify=LEFT, font=NORM_FONT)
+    complexity_dropdown = tkinter.ttk.Combobox(left_frame, values=complexities, state="readonly",
+                                               width=23, justify=LEFT, font=NORM_FONT)
     complexity_dropdown.current(0)
     complexity_dropdown.grid(row=0, column=2, pady=5)
 
-    # create a text box to enter the subject of the question, and place it in the left frame
     subjectlabel = Label(left_frame, text="Subject", width=12, anchor=W, justify=LEFT,
-                             font=NORM_FONT,
-                             bg='light yellow')
+                         font=NORM_FONT, bg='light yellow')
     subjectlabel.grid(row=0, column=3, padx=10, pady=5)
     subjects = ["C Programming", "C++ Programming"]
-    subject_Text = tk.ttk.Combobox(left_frame, values=subjects, state="readonly",width=23, justify=LEFT, font=NORM_FONT)
+    subject_Text = tkinter.ttk.Combobox(left_frame, values=subjects, state="readonly",
+                                        width=23, justify=LEFT, font=NORM_FONT)
     subject_Text.grid(row=0, column=4, padx=5, pady=5)
 
     topicLabel = Label(left_frame, text="Topic", width=12, anchor=W, justify=LEFT,
-                          font=NORM_FONT,
-                          bg='light yellow')
+                       font=NORM_FONT, bg='light yellow')
     topicLabel.grid(row=1, column=1, padx=10, pady=5)
-    topic_Text = Entry(left_frame, text="", width=25, justify=LEFT,font=NORM_FONT,bg='snow')
+    topic_Text = Entry(left_frame, width=25, justify=LEFT, font=NORM_FONT, bg='snow')
     topic_Text.grid(row=1, column=2, pady=5)
 
     marksLabel = Label(left_frame, text="Marks", width=12, anchor=W, justify=LEFT,
-                           font=NORM_FONT,
-                           bg='light yellow')
+                       font=NORM_FONT, bg='light yellow')
     marksLabel.grid(row=1, column=3, padx=10, pady=5)
-    marks_Text = Entry(left_frame, text="", width=25, justify=LEFT, font=NORM_FONT,bg='snow')
+    marks_Text = Entry(left_frame, width=25, justify=LEFT, font=NORM_FONT, bg='snow')
     marks_Text.grid(row=1, column=4, padx=5, pady=5)
-    
+
     answerLabel = Label(left_frame, text="Answer", width=12, anchor=W, justify=LEFT,
-                           font=NORM_FONT,
-                           bg='light yellow')
+                        font=NORM_FONT, bg='light yellow')
     answerLabel.grid(row=2, column=1, padx=10, pady=5)
-    answer_Text = Entry(left_frame, text="", width=25, justify=LEFT, font=NORM_FONT,bg='snow')
+    answer_Text = Entry(left_frame, width=25, justify=LEFT, font=NORM_FONT, bg='snow')
     answer_Text.grid(row=2, column=2, padx=5, pady=5)
 
+    # Info Frame
+    infoFrame = Frame(insertQ_window, width=200, height=100, bd=8, relief='ridge', bg='light yellow')
+    infoFrame.grid(row=4, column=0, padx=90, pady=1, columnspan=4, sticky="W")
     infoLabel = Label(infoFrame, text="Press Save button to save the modified records", width=60,
-                      anchor='center',
-                      justify=CENTER,
-                      font=NORM_FONT,
-                      bg='light yellow')
-
+                      anchor='center', justify=CENTER, font=NORM_FONT, bg='light yellow')
     infoLabel.grid(row=1, column=0, padx=10, pady=5)
 
-    # ---------------------------------Button Frame Start----------------------------------------
+    # Button Frame
     buttonFrame = Frame(insertQ_window, width=200, height=100, bd=4, relief='ridge')
     buttonFrame.grid(row=3, column=1, pady=8)
-    submit_deposit = Button(buttonFrame)
-
-    insert_result = partial(insert_question_toDb,question_entry, subject_Text, topic_Text,complexity_dropdown,marks_Text,answer_Text)
-
-    submit_deposit.configure(text="Save", fg="Black", command=insert_result,
-                             font=NORM_FONT, width=8, bg='light cyan', underline=0, state=NORMAL)
+    submit_deposit = Button(buttonFrame, text="Save", fg="Black", font=NORM_FONT,
+                            width=8, bg='light cyan', underline=0, state="normal")
+    insert_result = partial(insert_question_toDb, question_entry, subject_Text, topic_Text,
+                            complexity_dropdown, marks_Text, answer_Text)
+    submit_deposit.configure(command=insert_result)
     submit_deposit.grid(row=0, column=0)
-    """
-    clear_result = partial(clearRegisterPledgeForm,
-                           pledge_text,
-                           trust_nametext, infolabel)
-    """
-    clear = Button(buttonFrame, text="Reset", fg="Black", command=NONE,
+
+    clear = Button(buttonFrame, text="Reset", fg="Black", command=lambda: None,
                    font=NORM_FONT, width=8, bg='light cyan', underline=0)
     clear.grid(row=0, column=1)
 
     cancel = Button(buttonFrame, text="Close", fg="Black", command=insertQ_window.destroy,
                     font=NORM_FONT, width=8, bg='light cyan', underline=0)
     cancel.grid(row=0, column=2)
-    # ---------------------------------Button Frame End----------------------------------------
 
     insertQ_window.bind('<Return>', lambda event=None: submit_deposit.invoke())
     insertQ_window.bind('<Alt-c>', lambda event=None: cancel.invoke())
-    insertQ_window.bind('<Alt-r>', lambda event=None: self.print_button.invoke())
+    insertQ_window.bind('<Alt-r>', lambda event=None: clear.invoke())
 
     insertQ_window.focus()
     insertQ_window.grab_set()
-    #mainloop()
+
 
 # define a function to design the main screen of the application
 def designMainScreen(master):
@@ -590,16 +603,16 @@ def designMainScreen(master):
     master.bind('<Escape>', lambda event=None: btn_exit.invoke())
 
     # set the 'I' and 'i' keys to invoke the inventory button
-    master.bind('<I>', lambda event=None: btn_inventory.invoke())
-    master.bind('<i>', lambda event=None: btn_inventory.invoke())
-
-    # set the 'S' and 's' keys to invoke the sales button
-    master.bind('<S>', lambda event=None: btn_sales.invoke())
-    master.bind('<s>', lambda event=None: btn_sales.invoke())
-
-    # set the 'C' and 'c' keys to invoke the shopper button
-    master.bind('<c>', lambda event=None: btn_shopper.invoke())
-    master.bind('<C>', lambda event=None: btn_shopper.invoke())
+    # master.bind('<I>', lambda event=None: btn_inventory.invoke())
+    # master.bind('<i>', lambda event=None: btn_inventory.invoke())
+    #
+    # # set the 'S' and 's' keys to invoke the sales button
+    # master.bind('<S>', lambda event=None: btn_sales.invoke())
+    # master.bind('<s>', lambda event=None: btn_sales.invoke())
+    #
+    # # set the 'C' and 'c' keys to invoke the shopper button
+    # master.bind('<c>', lambda event=None: btn_shopper.invoke())
+    # master.bind('<C>', lambda event=None: btn_shopper.invoke())
 
     # run the mainloop for the application
     mainloop()
@@ -614,7 +627,7 @@ root.configure(bg='AntiqueWhite1')
 # set up canvas for displaying background image
 canvas_width, canvas_height = pyautogui.size()
 canvas = Canvas(root, width=canvas_width, height=canvas_height)
-myimage = ImageTk.PhotoImage(Image.open("..\\image\\Geometry-Header-1920x1080.jpg").resize((canvas_width * 2, canvas_height * 2)))
+myimage = ImageTk.PhotoImage(Image.open("..\\image\\3-4.jpg").resize((canvas_width * 2, canvas_height * 2)))
 canvas.create_image(0, 0, anchor="nw", image=myimage)
 canvas.pack()
 initilize_database()
